@@ -198,10 +198,10 @@
                 <p>Your video</p>
                 <input id="video_input" type="file" accept="video/*" />
             </div>
-            <div class="upload-area" ondrop="drop_json(event)" ondragover="drag_enter(event)">
+            <!-- <div class="upload-area" ondrop="drop_json(event)" ondragover="drag_enter(event)">
                 <p>Your .json</p>
                 <input id="json_input" type="file" accept="application/JSON" />
-            </div>
+            </div> -->
         </div>
 
         <div v-if="data_misaligned" class="data-warning">
@@ -210,7 +210,7 @@
         </div>
 
 
-        <annotations-nav v-bind:title_ids_dict="title_ids_dict" v-bind:detected_features="detected_features"
+        <!-- <annotations-nav v-bind:title_ids_dict="title_ids_dict" v-bind:detected_features="detected_features"
             v-bind:current_view="current_view" v-on:nav-clicked="set_current_view">
         </annotations-nav>
 
@@ -246,7 +246,7 @@
         <explicit-content-detection-viz v-if="current_view == 'Explicit Content Detection'"
             id="explicit_content_detection" v-bind:json_data="json_data" v-bind:video_info="video_info"
             v-on:shot-clicked="jump_video">
-        </explicit-content-detection-viz>
+        </explicit-content-detection-viz> -->
 
     </div>
 
