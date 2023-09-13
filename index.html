@@ -254,7 +254,8 @@
 
 
     <script src="utils/utils.js"></script>
-    
+
+
     <script>
 
         function jump_video_to_time(time) {
@@ -314,18 +315,18 @@
                 json_data: {},
                 video_info: { width: 800, height: 500, length: 252 },
                 video_length: 252,
-                current_view: 'Label Detection',
-                title_ids_dict: {
-                    'Label Detection': 'shot_label_annotations',
-                    'Shot Detection': 'shot_annotations',
-                    'Object Tracking': 'object_annotations',
-                    'Person Detection': 'person_detection_annotations',
-                    'Face Detection': 'face_detection_annotations',
-                    'Logo Recognition': 'logo_recognition_annotations',
-                    'Speech Transcription': 'speech_transcriptions',
-                    'Text Detection': 'text_annotations',
-                    'Explicit Content Detection': 'explicit_annotation'
-                }
+                // current_view: 'Label Detection',
+                // title_ids_dict: {
+                //     'Label Detection': 'shot_label_annotations',
+                //     'Shot Detection': 'shot_annotations',
+                //     'Object Tracking': 'object_annotations',
+                //     'Person Detection': 'person_detection_annotations',
+                //     'Face Detection': 'face_detection_annotations',
+                //     'Logo Recognition': 'logo_recognition_annotations',
+                //     'Speech Transcription': 'speech_transcriptions',
+                //     'Text Detection': 'text_annotations',
+                //     'Explicit Content Detection': 'explicit_annotation'
+                // }
             }, methods: {
                 jump_video: function (event_data) {
                     document.querySelector('video').scrollIntoView({ 'behavior': 'smooth', 'block': 'center' })
@@ -372,18 +373,18 @@
 
         const URL = window.URL || window.webkitURL
 
-        function fetch_json(url) {
-            var json = null
-            $.ajax({
-                'async': false,
-                'url': url,
-                'dataType': "json",
-                'success': function (data) {
-                    json = data
-                }
-            })
-            return json
-        }
+        // function fetch_json(url) {
+        //     var json = null
+        //     $.ajax({
+        //         'async': false,
+        //         'url': url,
+        //         'dataType': "json",
+        //         'success': function (data) {
+        //             json = data
+        //         }
+        //     })
+        //     return json
+        // }
 
         function load_video_from_url(url) {
             video.src = url
@@ -395,46 +396,46 @@
             load_video_from_url(file_url)
         }
 
-        function load_json_from_url(url) {
-            var json = null
-            $.ajax({
-                'async': false,
-                'url': url,
-                'dataType': "json",
-                'success': function (data) {
-                    json = data
-                }
-            })
-            json_data = json
+//         function load_json_from_url(url) {
+//             var json = null
+//             $.ajax({
+//                 'async': false,
+//                 'url': url,
+//                 'dataType': "json",
+//                 'success': function (data) {
+//                     json = data
+//                 }
+//             })
+//             json_data = json
 
-            console.log(json_data)
-            app.json_data = json_data
+//             console.log(json_data)
+//             app.json_data = json_data
 
-            console.log('keys ->>', Object.keys(json_data))
-            // check validity of json
-            if (!('annotation_results' in json_data)) {
-                alert("❌ Format of json is not compatible, make sure you are setting the 'output_uri' \
-configuration when calling the Video Intelligence API so that it \
-outputs a .json file direction to Google Cloud Storage. \
-Find links to script examples at the top right of the screen.")
+//             console.log('keys ->>', Object.keys(json_data))
+//             // check validity of json
+//             if (!('annotation_results' in json_data)) {
+//                 alert("❌ Format of json is not compatible, make sure you are setting the 'output_uri' \
+// configuration when calling the Video Intelligence API so that it \
+// outputs a .json file direction to Google Cloud Storage. \
+// Find links to script examples at the top right of the screen.")
 
-                json_input.value = null
-            }
+//                 json_input.value = null
+//             }
 
 
 
-        }
+//         }
 
-        function load_json_dragged(event) {
-            const file = this.files[0]
-            const file_url = URL.createObjectURL(file)
-            load_json_from_url(file_url);
-        }
+        // function load_json_dragged(event) {
+        //     const file = this.files[0]
+        //     const file_url = URL.createObjectURL(file)
+        //     load_json_from_url(file_url);
+        // }
 
         var json_data = {}
         const video = document.getElementById('video')
         const video_input = document.getElementById('video_input')
-        const json_input = document.getElementById('json_input')
+        // const json_input = document.getElementById('json_input')
 
 
         video.oncanplay = function () {
@@ -456,16 +457,16 @@ Find links to script examples at the top right of the screen.")
 
         }
 
-        function drop_json(ev) {
-            ev.preventDefault()
-            json_input.files = ev.dataTransfer.files
-            json_input.dispatchEvent(new Event('change'))
-        }
+        // function drop_json(ev) {
+        //     ev.preventDefault()
+        //     json_input.files = ev.dataTransfer.files
+        //     json_input.dispatchEvent(new Event('change'))
+        // }
 
         video_input.addEventListener('change', load_video_dragged, false)
-        json_input.addEventListener('change', load_json_dragged, false)
+        // json_input.addEventListener('change', load_json_dragged, false)
 
-        load_json_from_url("assets/test_json.json")
+        // load_json_from_url("assets/test_json.json")
         load_video_from_url("assets/test_video.mp4")
 
 
