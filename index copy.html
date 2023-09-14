@@ -4,9 +4,10 @@
 <head>
 
     <title>API Visualiser</title>
-    <link rel="icon" type="image/png" href="assets/icon2.png" />
+    <link rel="icon" type="image/png" href="assets/icon.png" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
@@ -16,6 +17,18 @@
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://unpkg.com/vue-router@2.0.0/dist/vue-router.js"></script>
+
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-N80GH8KX9W"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-N80GH8KX9W', { client_storage: 'none' });
+
+    </script>
+
 
     <style>
         body {
@@ -146,11 +159,13 @@
 
 <body>
 
+
+
     <div id="app" class="mdl-layout--fixed-header">
 
         <header class="mdl-layout__header">
             <div class="mdl-layout-icon">
-                <img class="logo" src="assets/icon2.png">
+                <img class="logo" src="assets/icon.png">
             </div>
             <div class="mdl-layout__header-row">
 
@@ -163,18 +178,35 @@
             <video id="video" controls ></video>
         </div>
 
+
+
         <div id="upload-data">
-            <h5>CCTV 비식별화</h5>
-            <p>
+            <h5>Try with your data</h5>
+            <p>You can analyse a video by following the instructions
+                Also see the script 
+                if you want to run all features at once.
             </p>
+
+            <p>This app <b><u>doesn't</u></b> send or store any of your video or annotation data. It just visualises
+                local data files.</p>
             <div class="upload-area" ondrop="drop_video(event)" ondragover="drag_enter(event)">
                 <p>Your video</p>
                 <input id="video_input" type="file" accept="video/*" />
             </div>
         </div>
+
+        <div v-if="data_misaligned" class="data-warning">
+            It looks like the json data dosn't align with the video file, are you sure you have all of the right files
+            uploaded?
+        </div>
+
     </div>
 
+
+
+
     <script src="utils/utils.js"></script>
+
 
     <script>
 
@@ -185,7 +217,42 @@
         }
 
 
+
         // define component
+        Vue.component('annotations-nav-tab', {
+            props: ['title', 'current_view', 'data_id', 'detected_features'],
+            computed: {
+                has_data: function () {
+                    return this.detected_features.includes(this.data_id)
+                }
+            },
+            template: `
+            <div class="nav-tab" v-bind:class="{selected:current_view == title, disabled:(!has_data)}">{{title}}
+                <span v-if="has_data" class="material-icons">
+                    check_circle
+                </span>
+            </div>
+            `
+        })
+
+        Vue.component('annotations-nav', {
+            props: ['title_ids_dict', 'current_view', 'detected_features'],
+            methods: {
+                nav_clicked: function (title) {
+                    this.$emit('nav-clicked', title)
+                },
+            },
+            template: `
+            <div class="feature-tabs">
+                <annotations-nav-tab v-for="id, title in title_ids_dict"
+                    v-bind:title="title" v-bind:data_id="id"
+                    v-bind:detected_features="detected_features" v-bind:current_view="current_view"
+                    v-on:click.native="nav_clicked(title)">
+                </annotations-nav-tab>
+            </div>
+            `
+        })
+
         var router = new VueRouter({
             mode: 'history',
             // routes: { path: '/match/:id', component: test_com}
@@ -197,6 +264,7 @@
             router,
             el: '#app',
             data: {
+                json_data: {},
                 video_info: { width: 800, height: 500, length: 252 },
                 video_length: 252,
             }, methods: {
@@ -207,6 +275,36 @@
                 set_current_view: function (new_view) {
                     this.current_view = new_view
                     router.push({ hash: '#' + new_view })
+
+
+                }
+            },
+            computed: {
+                data_misaligned: function () {
+                    console.log('delt')
+                    if (this.json_data)
+                        if (this.json_data.annotation_results) {
+                            const delta = this.video_info.length - this.json_data.annotation_results[0].segment.end_time_offset.seconds
+                            console.log('delt', delta)
+                            if (Math.abs(delta) > 2) {
+                                return true
+                            }
+                        }
+                    return false
+                },
+                detected_features: function () {
+
+                    var features = []
+
+                    if (!this.json_data.annotation_results)
+                        return features
+
+                    this.json_data.annotation_results.forEach(annotations => {
+                        console.log(Object.keys(annotations))
+                        features = features.concat(Object.keys(annotations))
+                    })
+
+                    return features
                 }
             }
         })
