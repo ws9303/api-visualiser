@@ -1,4 +1,4 @@
-# [Video Intelligence API Visualiser](https://zackakil.github.io/video-intelligence-api-visualiser/) ([try now](https://zackakil.github.io/video-intelligence-api-visualiser/))
+# [Video Intelligence API Visualiser](https://zackakil.github.io/video-intelligence-api-visualiser/) ([try now](https://ws9303.github.io/api-visualiser/))
 
 An app that visualises annotations from the [Google Cloud Video Intelligence API](https://cloud.google.com/video-intelligence?utm_source=ext&utm_medium=partner&utm_campaign=CDR_zac_aiml_vid_intel_demo_interactive%20demo_060221&utm_content=-).
 
