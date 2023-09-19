@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+
+  <title>CCTV</title>
+  <link rel="icon" type="image/png" href="assets/logo.png" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css">
+  <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+
+
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue-router@2.0.0/dist/vue-router.js"></script>
+
+  <style>
+      body {
+          text-align: center;
+          min-height: 1500px;
+          min-width: 1130px;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5 {
+          color: #5d5d5d;
+      }
+
+      #video-conatiner {
+
+          position: relative;
+          width: 800px;
+          margin: 15px;
+          display: inline-block;
+      }
+
+      #video-conatiner>canvas {
+          width: 100%;
+          position: absolute;
+          opacity: 0.8;
+          left: 0;
+          height: 100%;
+          pointer-events: none;
+      }
+
+      video {
+          width: 100%;
+          margin: auto;
+          display: block;
+      }
+
+      video::-webkit-media-controls-fullscreen-button {
+          display: none !important;
+      }
+
+      .mdl-layout__header {
+          background-color: rgb(255 255 255);
+          color: #5d5d5d;
+          font-weight: 100;
+      }
+
+      #upload-data {
+          display: inline-block;
+          text-align: center;
+          vertical-align: top;
+          width: 250px;
+      }
+
+      #upload-data>p {
+          text-align: justify;
+      }
+
+      .feature-tabs {
+          margin: 30px;
+          text-align: center;
+      }
+
+      .feature-tabs>div {
+          display: inline-block;
+          font-size: 1.2em;
+          padding: 12px;
+          cursor: pointer;
+          color: #777777;
+          font-weight: 300;
+
+          border: solid #4285f4 1px;
+          border-radius: 5px;
+          margin: 5px;
+      }
+
+      .feature-tabs>div:hover {
+          background-color: #4285f41a;
+      }
+
+
+      .feature-tabs>.selected {
+          border-bottom: 2px solid #4285F4;
+      }
+
+      .feature-tabs>.disabled {
+          color: #cdcdcd;
+      }
+
+      .logo {
+          width: inherit;
+      }
+
+      .upload-area {
+
+          /* display: inline-block; */
+          width: 200px;
+          /* height: 62px; */
+          border: dashed #ededed 3px;
+          border-radius: 5px;
+          padding: 15px;
+          margin: 15px;
+          overflow: hidden;
+      }
+
+      .data-warning {
+          background-color: #ffffc3;
+          /* display: inline-block; */
+          margin: auto;
+          position: relative;
+          padding: 15px;
+          text-align: center;
+      }
+
+      .material-icons {
+          vertical-align: middle;
+          font-size: 19px;
+      }
+
+      .nav-tab>.material-icons {
+          color: #0F9D58;
+      }
+  </style>
+</head>
+
+<body>
+
+
+
+  <div id="app" class="mdl-layout--fixed-header">
+
+      <header class="mdl-layout__header">
+          <div class="mdl-layout-icon">
+              <img class="logo" src="assets/logo.png">
+          </div>
+          <div class="mdl-layout__header-row">
+
+              <span class="mdl-layout-title">CCTV 비식별화</span>
+          </div>
+      </header>
+
+      <div id="video-conatiner">
+          <canvas id="my_canvas" width="800" height="500"></canvas>
+          <video id="video" controls ></video>
+      </div>
+
+
+
+      <div id="upload-data">
+          <h5>CCTV 비식별화 파일 업로드</h5>
+          <p>
+          </p>
+          <div class="upload-area" ondrop="drop_video(event)" ondragover="drag_enter(event)">
+              <p>대상 비디오</p>
+              <input id="video_input" type="file" accept="video/*" />
+          </div>
+      </div>
+
+  </div>
+
+  <script src="utils/utils.js"></script>
+
+  <script>
+
+      function jump_video_to_time(time) {
+          const video = document.querySelector('video')
+          video.currentTime = time
+          video.play()
+      }
+
+
+
+        // define component
+      var router = new VueRouter({
+          mode: 'history',
+          // routes: { path: '/match/:id', component: test_com}
+      });
+
+
+
+      var app = new Vue({
+          router,
+          el: '#app',
+          data: {
+              video_info: { width: 800, height: 500, length: 252 },
+              video_length: 252,
+          }, 
+          methods: {
+              jump_video: function (event_data) {
+                  document.querySelector('video').scrollIntoView({ 'behavior': 'smooth', 'block': 'center' })
+                  jump_video_to_time(event_data.seconds)
+              },
+              set_current_view: function (new_view) {
+                  this.current_view = new_view
+                  router.push({ hash: '#' + new_view })
+
+
+              }
+          }
+      })
+
+
+
+      const URL = window.URL || window.webkitURL
+
+      function load_video_from_url(url) {
+          video.src = url
+      }
+
+      function load_video_dragged(event) {
+          const file = this.files[0]
+          const file_url = URL.createObjectURL(file)
+          load_video_from_url(file_url)
+      }
+
+      const video = document.getElementById('video')
+      const video_input = document.getElementById('video_input')
+
+
+      video.oncanplay = function () {
+          console.log("Can start playing video", video.duration, video.videoHeight, video.videoWidth)
+          app.video_info.length = video.duration
+          app.video_length.duration
+          app.video_info.height = 500
+          app.video_info.width = 800
+      }
+
+      function drag_enter(ev) {
+          ev.preventDefault()
+      }
+
+      function drop_video(ev) {
+          ev.preventDefault()
+          video_input.files = ev.dataTransfer.files
+          video_input.dispatchEvent(new Event('change'))
+
+      }
+
+      video_input.addEventListener('change', load_video_dragged, false)
+
+      // check for hash code in url 
+
+      if (app.$route.hash) {
+          const hash_value = decodeURI(app.$route.hash.substring(1))
+          if (hash_value in app.title_ids_dict) {
+              app.current_view = hash_value
+          }
+
+      }
+
+
+
+  </script>
+
+</body>
+
+</html>
